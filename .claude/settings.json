@@ -1,7 +1,6 @@
 {
   "permissions": {
     "allow": [
-      "*",
       "Read(**)",
       "Write(**)",
       "Edit(**)",
@@ -184,12 +183,7 @@
       "WebFetch(domain:www.datacamp.com)",
       "WebFetch(domain:datacamp.com)"
     ],
-    "deny": [
-      "Bash(rm -rf /*:*)",
-      "Bash(rm -rf /:*)",
-      "Bash(sudo rm:*)",
-      "Bash(chmod -R 777:*)"
-    ],
+    "deny": [],
     "ask": []
   }
 }

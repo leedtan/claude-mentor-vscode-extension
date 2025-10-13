@@ -61,11 +61,6 @@ Guidelines:
 
             this.isActive = true;
             console.log('Mentor session started with Claude Agent SDK');
-
-            // Start processing responses in background
-            this.processResponses().catch(error => {
-                console.error('Error processing responses:', error);
-            });
         } catch (error) {
             console.error('Failed to start mentor session:', error);
             throw error;
@@ -93,14 +88,16 @@ Guidelines:
         console.log('Mentor session stopped');
     }
 
-    async handleFileChange(change: FileChange): Promise<string> {
-        if (!this.isActive || !this.sendMessage) {
+    async handleFileChange(change: FileChange, onResponse?: (text: string) => void): Promise<string> {
+        if (!this.isActive || !this.sendMessage || !this.agentSession) {
             throw new Error('Mentor session not active');
         }
 
         try {
             // Format the message with file change context
-            const messageText = `I just saved a file. Here's what changed:
+            const messageText = change.filePath === 'chat'
+                ? change.diff // Direct chat message
+                : `I just saved a file. Here's what changed:
 
 **File:** \`${change.filePath}\`
 
@@ -129,9 +126,31 @@ Feel free to use Read, Grep, or Glob to explore more context if needed.`;
 
             this.sendMessage(message);
 
-            // Note: Actual response will come through processResponses()
-            // This is a streaming API, so we return acknowledgment
-            return 'Message sent to Claude, awaiting response...';
+            // Collect response from the agent
+            let responseText = '';
+            let foundResponse = false;
+
+            // Read messages until we get an assistant response
+            for await (const msg of this.agentSession) {
+                if (msg.type === 'assistant') {
+                    // Extract text content from assistant message
+                    const content = msg.message.content;
+                    for (const block of content) {
+                        if (block.type === 'text') {
+                            responseText += block.text;
+                            if (onResponse) {
+                                onResponse(block.text);
+                            }
+                        }
+                    }
+                    foundResponse = true;
+                } else if (msg.type === 'result') {
+                    // Conversation turn completed
+                    break;
+                }
+            }
+
+            return responseText || 'No response received from Claude.';
         } catch (error: any) {
             console.error('Error handling file change:', error);
             return `Error: ${error.message}`;
@@ -171,22 +190,6 @@ Feel free to use Read, Grep, or Glob to explore more context if needed.`;
         };
 
         return { generator, send };
-    }
-
-    private async processResponses(): Promise<void> {
-        if (!this.agentSession) {
-            return;
-        }
-
-        try {
-            for await (const message of this.agentSession) {
-                console.log('Received message from agent:', message.type);
-                // Messages will be processed by the UI layer
-                // This method keeps the generator alive
-            }
-        } catch (error) {
-            console.error('Error in response processing:', error);
-        }
     }
 
     getStatus(): boolean {
