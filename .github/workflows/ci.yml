@@ -30,7 +30,8 @@ jobs:
       run: npm run compile
 
     - name: Run tests
-      run: npm test
+      run: xvfb-run -a npm test
+      if: runner.os == 'Linux'
 
     - name: Check for TypeScript errors
       run: npx tsc --noEmit
