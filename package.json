@@ -1,0 +1,49 @@
+{
+  "name": "claude-mentor",
+  "displayName": "Claude Mentor",
+  "description": "Real-time code mentorship from Claude",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "claude-mentor.toggleMentorMode",
+        "title": "Claude Mentor: Toggle Mentor Mode"
+      },
+      {
+        "command": "claude-mentor.showPanel",
+        "title": "Claude Mentor: Show Chat Panel"
+      }
+    ],
+    "configuration": {
+      "title": "Claude Mentor",
+      "properties": {
+        "claudeMentor.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Anthropic API Key (or set ANTHROPIC_API_KEY environment variable)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "@types/vscode": "^1.105.0",
+    "typescript": "^5.9.3",
+    "vscode-test": "^1.6.1"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.1.14"
+  }
+}
