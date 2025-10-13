@@ -59,21 +59,6 @@ async function startMentorMode(): Promise<void> {
     }
 
     try {
-        // Get API key from config or environment
-        const config = vscode.workspace.getConfiguration('claudeMentor');
-        const apiKey = config.get<string>('apiKey') || process.env.ANTHROPIC_API_KEY;
-
-        if (!apiKey) {
-            const action = await vscode.window.showErrorMessage(
-                'No Anthropic API key found.',
-                'Open Settings'
-            );
-            if (action === 'Open Settings') {
-                vscode.commands.executeCommand('workbench.action.openSettings', 'claudeMentor.apiKey');
-            }
-            return;
-        }
-
         // Get workspace root
         const workspaceFolders = vscode.workspace.workspaceFolders;
         if (!workspaceFolders || workspaceFolders.length === 0) {
@@ -82,9 +67,13 @@ async function startMentorMode(): Promise<void> {
         }
         const workspaceRoot = workspaceFolders[0].uri.fsPath;
 
+        // Get optional API key from config (SDK will auto-detect from environment if not provided)
+        const config = vscode.workspace.getConfiguration('claudeMentor');
+        const apiKey = config.get<string>('apiKey') || process.env.ANTHROPIC_API_KEY;
+
         // Create mentor config
         const mentorConfig: MentorConfig = {
-            apiKey,
+            apiKey: apiKey || '', // Optional - SDK will use ANTHROPIC_API_KEY from environment if empty
             workspaceRoot
         };
 
@@ -147,7 +136,20 @@ async function startMentorMode(): Promise<void> {
         isMentorModeActive = true;
     } catch (error: any) {
         console.error('Failed to start mentor mode:', error);
-        vscode.window.showErrorMessage(`Failed to start Claude Mentor: ${error.message}`);
+
+        // Check if it's an API key error
+        const errorMessage = error.message || String(error);
+        if (errorMessage.includes('API key') || errorMessage.includes('ANTHROPIC_API_KEY')) {
+            const action = await vscode.window.showErrorMessage(
+                'No Anthropic API key found. Set ANTHROPIC_API_KEY environment variable or configure in settings.',
+                'Open Settings'
+            );
+            if (action === 'Open Settings') {
+                vscode.commands.executeCommand('workbench.action.openSettings', 'claudeMentor.apiKey');
+            }
+        } else {
+            vscode.window.showErrorMessage(`Failed to start Claude Mentor: ${errorMessage}`);
+        }
 
         // Cleanup on error
         if (fileWatcher) {

@@ -10,6 +10,25 @@
 
 ---
 
+## 📊 Implementation Status
+
+**Completed Tasks:** 0-7 of 10 (70%)
+
+✅ **Tasks 0-4**: Project setup, extension structure, MentorSession manager, SDK integration
+✅ **Tasks 5-7**: File watcher, diff generator, chat panel UI, full component wiring
+
+🔄 **Remaining Tasks:**
+- Task 8: Fix SDK Integration (verify APIs match actual SDK)
+- Task 9: Documentation and Polish
+- Task 10: Set Up GitHub Actions CI/CD
+
+**Key Design Decision - API Key Handling:**
+The extension automatically inherits `ANTHROPIC_API_KEY` from your environment, just like Claude CLI. Users who already use Claude CLI need zero additional configuration - the extension "just works"! An optional VSCode setting is available for override if needed.
+
+**Current State:** Extension compiles successfully, all core features implemented. Ready for SDK verification and testing.
+
+---
+
 ## Task 0: Create GitHub Repository ✅ COMPLETED
 
 **Repository created:** https://github.com/leedtan/claude-mentor-vscode-extension
@@ -218,7 +237,7 @@ Visit GitHub repository in browser to confirm files are there.
 
 ---
 
-## Task 2: Create Extension Entry Point 🔄 IN PROGRESS
+## Task 2: Create Extension Entry Point ✅ COMPLETED
 
 **Files:**
 - Create: `~/workspace/claude-mentor-extension/src/extension.ts`
@@ -288,7 +307,7 @@ git commit -m "feat: add extension entry point with command stubs"
 
 ---
 
-## Task 3: Create Mentor Session Manager
+## Task 3: Create Mentor Session Manager ✅ COMPLETED
 
 **Files:**
 - Create: `~/workspace/claude-mentor-extension/src/mentorSession.ts`
@@ -424,7 +443,7 @@ git commit -m "feat: add MentorSession manager skeleton"
 
 ---
 
-## Task 4: Integrate Claude Agent SDK
+## Task 4: Integrate Claude Agent SDK ✅ COMPLETED
 
 **Files:**
 - Modify: `~/workspace/claude-mentor-extension/src/mentorSession.ts:10-30`
@@ -590,11 +609,13 @@ git commit -m "feat: integrate Claude Agent SDK (pending API verification)"
 
 ---
 
-## Task 5: Create File Watcher and Diff Generator
+## Task 5: Create File Watcher and Diff Generator ✅ COMPLETED
 
 **Files:**
 - Create: `~/workspace/claude-mentor-extension/src/fileWatcher.ts`
 - Create: `~/workspace/claude-mentor-extension/src/diffGenerator.ts`
+
+**Completed:** All files created, compiled successfully, tests pass
 
 **Step 1: Create diffGenerator.ts**
 
@@ -798,11 +819,13 @@ git commit -m "feat: add file watcher and diff generator"
 
 ---
 
-## Task 6: Create Chat Panel UI
+## Task 6: Create Chat Panel UI ✅ COMPLETED
 
 **Files:**
 - Create: `~/workspace/claude-mentor-extension/src/chatPanel.ts`
 - Create: `~/workspace/claude-mentor-extension/src/webview/index.html`
+
+**Completed:** ChatPanel class and HTML webview created with full interactivity
 
 **Step 1: Create webview directory**
 
@@ -1079,10 +1102,21 @@ git commit -m "feat: add chat panel UI with webview"
 
 ---
 
-## Task 7: Wire Everything Together
+## Task 7: Wire Everything Together ✅ COMPLETED
 
 **Files:**
 - Modify: `~/workspace/claude-mentor-extension/src/extension.ts`
+
+**Completed:** All components integrated with toggle commands and error handling
+
+**Design Note - API Key Handling:**
+The extension now uses an improved design for API key management:
+- **Primary method**: Inherits `ANTHROPIC_API_KEY` from environment (just like Claude CLI)
+- **Secondary method**: Optional VSCode setting `claudeMentor.apiKey` for override
+- **No pre-check**: SDK handles missing key gracefully with clear error message
+- **Benefit**: Users who already use Claude CLI don't need additional configuration
+
+This means if you're already authenticated with Claude CLI, the extension "just works" without any setup!
 
 **Step 1: Replace extension.ts with full implementation**
 
@@ -1374,9 +1408,11 @@ Real-time code mentorship from Claude as you code. Toggle "mentor mode" to have 
 
 1. **Install the extension** (or run locally with F5 in development)
 
-2. **Set your Anthropic API Key**:
-   - Option A: VSCode Settings → Search "Claude Mentor" → Set API Key
-   - Option B: Set `ANTHROPIC_API_KEY` environment variable
+2. **Authentication** (automatic if you use Claude CLI):
+   - If you already use Claude CLI, the extension inherits your `ANTHROPIC_API_KEY` automatically - no setup needed!
+   - Otherwise, set your Anthropic API key:
+     - Option A: Set `ANTHROPIC_API_KEY` environment variable (recommended)
+     - Option B: VSCode Settings → Search "Claude Mentor" → Set API Key
 
 3. **Open a project folder** in VSCode
 

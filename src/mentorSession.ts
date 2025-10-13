@@ -34,11 +34,10 @@ export class MentorSession {
             this.sendMessage = send;
 
             // Initialize Claude Agent with streaming input
-            this.agentSession = queryFunction({
-                prompt: generator,
-                options: {
-                    cwd: this.config.workspaceRoot,
-                    systemPrompt: `You are a code mentor providing real-time feedback to a developer.
+            // Note: SDK will auto-detect ANTHROPIC_API_KEY from environment
+            const options: any = {
+                cwd: this.config.workspaceRoot,
+                systemPrompt: `You are a code mentor providing real-time feedback to a developer.
 
 Your role:
 - Review code changes for bugs, issues, and improvements
@@ -51,12 +50,20 @@ Guidelines:
 - Focus on learning, not just correctness
 - Use the Read, Grep, and Glob tools to understand context
 - Respond conversationally in markdown format`,
-                    allowedTools: ['Read', 'Grep', 'Glob', 'Bash'],
-                    permissionMode: 'bypassPermissions', // Auto-approve tool use for read operations
-                    env: {
-                        ANTHROPIC_API_KEY: this.config.apiKey
-                    }
-                }
+                allowedTools: ['Read', 'Grep', 'Glob', 'Bash'],
+                permissionMode: 'bypassPermissions', // Auto-approve tool use for read operations
+            };
+
+            // Only pass API key if explicitly configured (otherwise SDK uses environment)
+            if (this.config.apiKey) {
+                options.env = {
+                    ANTHROPIC_API_KEY: this.config.apiKey
+                };
+            }
+
+            this.agentSession = queryFunction({
+                prompt: generator,
+                options
             });
 
             this.isActive = true;
