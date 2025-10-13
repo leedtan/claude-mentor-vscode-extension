@@ -24,7 +24,7 @@
 
 ---
 
-## Task 1: Initialize Extension Project Structure
+## Task 1: Initialize Extension Project Structure ✅ COMPLETED
 
 **Files:**
 - Create: `~/workspace/claude-mentor-extension/package.json`
@@ -218,7 +218,7 @@ Visit GitHub repository in browser to confirm files are there.
 
 ---
 
-## Task 2: Create Extension Entry Point
+## Task 2: Create Extension Entry Point 🔄 IN PROGRESS
 
 **Files:**
 - Create: `~/workspace/claude-mentor-extension/src/extension.ts`
