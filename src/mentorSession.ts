@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { MentorConfig, FileChange } from './types';
-import type { Query, SDKUserMessage } from '@anthropic-ai/claude-agent-sdk';
+import type { Query, SDKUserMessage } from '@anthropic-ai/claude-agent-sdk' with { 'resolution-mode': 'import' };
 
 // Dynamic import for ESM SDK
 let queryFunction: any;
